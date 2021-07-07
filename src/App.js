@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.scss";
+import Filter from "./components/Filter";
+import banner from "./assets/banner.png";
 
-function App() {
+const App = () => {
+  const [characters, setCharacters] = useState([]);
+  const [value, setValue] = useState("");
+  const [gender, setGender] = useState("");
+
+  useEffect(() => {
+    fetch(
+      `https://rickandmortyapi.com/api/character/?name=${value}&gender=${gender}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setCharacters(data.results);
+        console.log(data);
+      });
+  }, [value, gender]);
+
+  const handleChangeInput = (e) => setValue(e.target.value);
+
+  const handleChangeRadio = (e) => setGender(e.target.value);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <>
+      <header>
+        <img src={banner}></img>
       </header>
-    </div>
+      <Filter
+        handleChangeInput={handleChangeInput}
+        handleChangeRadio={handleChangeRadio}
+        value={value}
+      />
+      <section>
+        {characters.map((character) => (
+          <article>
+            <img src={character.image}></img>
+            <div className="container">
+              <div>
+                <h3>{character.name}</h3>
+                <p>{character.status}</p>
+              </div>
+              <div>
+                <p>Last known location:</p>
+                <h5>{character.location.name}</h5>
+              </div>
+              <div>
+                <p>First seen in:</p>
+                <h5>xxx</h5>
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+    </>
   );
-}
+};
 
 export default App;
